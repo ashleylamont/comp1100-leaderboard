@@ -50,7 +50,9 @@ function runCabal(
 async function battle(playerA: User, playerB: User, message: Message) {
   const result = new MessageEmbed()
     .setTitle('Reversi-nator 5000')
-    .addField('Status', 'Initializing 🕑');
+    .addField('Status', 'Initializing 🕑')
+    .addField('Player A', `${playerA.username} (<@${playerA.id}>)`)
+    .addField('Player B', `${playerB.username} (<@${playerB.id}>)`);
 
   const ratingA = new Rating(playerA.skillRating, playerA.sigma);
   const ratingB = new Rating(playerB.skillRating, playerB.sigma);
@@ -135,11 +137,13 @@ async function battle(playerA: User, playerB: User, message: Message) {
         const dRatingB = (newRatingB.mu - ratingB.mu).toPrecision(3);
         const dSigmaB = (newRatingB.sigma - ratingB.sigma).toPrecision(3);
 
-        result.addField('Winner', `${winner.username} (<@${winner.id}>)`);
-        result.addField('Loser', `${loser.username} (<@${loser.id}>)`);
         result.addField(`${playerA.username} Rating Adjustment`, `${+dRatingA > 0 ? '+' : ''}${dRatingA}=>${newRatingA.mu.toPrecision(3)} (${+dSigmaA > 0 ? '+' : ''}${dSigmaA}=>${newRatingA.sigma.toPrecision(3)})`);
         result.addField(`${playerB.username} Rating Adjustment`, `${+dRatingB > 0 ? '+' : ''}${dRatingB}=>${newRatingB.mu.toPrecision(3)} (${+dSigmaB > 0 ? '+' : ''}${dSigmaB}=>${newRatingB.sigma.toPrecision(3)})`);
-        result.spliceFields(0, 1, [{ name: 'Status', value: 'Saving Results 💾' }]);
+        result.spliceFields(0, 3, [
+          { name: 'Status', value: 'Saving Results 💾' },
+          { name: 'Winner', value: `${winner.username} (<@${winner.id}>)` },
+          { name: 'Loser', value: `${loser.username} (<@${loser.id}>)` },
+        ]);
         await resultMessage.edit(result);
 
         playerA.skillRating = newRatingA.mu;
