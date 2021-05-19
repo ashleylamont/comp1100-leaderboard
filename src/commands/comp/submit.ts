@@ -52,7 +52,7 @@ export default class SubmitCommand extends Command {
     const collector = channel.createMessageCollector(filter, { time: 300000, max: 1 });
 
     collector.on('collect', async (m) => {
-      m.reply('Uploading submission now. Thanks for playing!');
+      m.reply('Uploading submission now. Thanks for playing!\n**NOTE: The submission will run a virus check first. You will be notified when this is complete.**');
       const attachment = m.attachments.first();
 
       await downloadAndScanSubmission(attachment.url, message.author);
