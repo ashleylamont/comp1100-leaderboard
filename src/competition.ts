@@ -175,8 +175,11 @@ async function battle(playerA: User, playerB: User, message: Message) {
           await resultMessage.edit(result);
         } catch (e) {
           console.error(e);
+          let error = '';
+          if ((e?.toString() ?? '') === '') error = 'Error unspecified.';
+          else error = e.toString();
           result.spliceFields(0, 1, [{ name: 'Status', value: 'Error' }]);
-          result.addField('Error Response', e);
+          result.addField('Error Response', error);
           await resultMessage.edit(result);
           await resultMessage.channel.send(`<@${playerA.id}>, <@${playerB.id}>\n${errorHints}`);
         }
@@ -184,8 +187,11 @@ async function battle(playerA: User, playerB: User, message: Message) {
     );
   } catch (e) {
     console.error(e);
+    let error = '';
+    if ((e?.toString() ?? '') === '') error = 'Error unspecified.';
+    else error = e.toString();
     result.spliceFields(0, 1, [{ name: 'Status', value: 'Error' }]);
-    result.addField('Error Response', e);
+    result.addField('Error Response', error);
     await resultMessage.edit(result);
     await resultMessage.channel.send(`<@${playerA.id}>, <@${playerB.id}>\n${errorHints}`);
   }
