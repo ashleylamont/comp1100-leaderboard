@@ -16,7 +16,7 @@ export default class SubmitCommand extends Command {
       clientPermissions: ['MANAGE_CHANNELS'],
       throttling: {
         usages: 2,
-        duration: 900,
+        duration: 300,
       },
     });
   }
