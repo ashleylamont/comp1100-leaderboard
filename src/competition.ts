@@ -166,6 +166,13 @@ async function battle(playerA: User, playerB: User, message: Message) {
             { name: 'Winner', value: `${winner.username} (<@${winner.id}>)` },
             { name: 'Loser', value: `${loser.username} (<@${loser.id}>)` },
           ]);
+          result.addField(
+            'Final Board',
+            outcome.finalState.board
+              .match(/.{1,8}/g)
+              .map((s) => s.replaceAll('1', '⚪').replaceAll('2', '⚫').replaceAll('0', '❔'))
+              .join('\n'),
+          );
           await resultMessage.edit(result);
 
           playerA.skillRating = newRatingA.mu;
