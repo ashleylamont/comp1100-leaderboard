@@ -2,9 +2,8 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import axios from 'axios';
 import * as nvt from 'node-virustotal';
-import * as rimraf from 'rimraf';
-import { copyFile, unlink } from 'fs/promises';
-import { promisify } from 'util';
+import { copyFile } from 'fs/promises';
+import * as uuid from 'uuid';
 // eslint-disable-next-line
 import config from './config';
 
@@ -70,14 +69,15 @@ async function downloadAndScanSubmission(url, user) {
 }
 
 async function createEnvironment(userid) {
-  const userPath = path.join(__dirname, `../environments/${userid}`);
+  // const userPath = path.join(__dirname, `../environments/${userid}`);
+  const uuidPath = path.join(__dirname, `../environments/${uuid.v4()}`);
 
-  await promisify(rimraf)(userPath);
-  await copy(repoPath, userPath, { overwrite: false });
-  await unlink(path.join(__dirname, `../environments/${userid}/src/AI.hs`));
-  await copyFile(path.join(submissionsPath, `${userid}.hs`), path.join(__dirname, `../environments/${userid}/src/AI.hs`));
+  // const newPath = await promisify(rimraf)(uuidPath);
+  await copy(repoPath, uuidPath, { overwrite: false });
+  // await unlink(path.join(__dirname, `../environments/${userid}/src/AI.hs`));
+  await copyFile(path.join(submissionsPath, `${userid}.hs`), path.join(uuidPath, '/src/AI.hs'));
 
-  return userPath;
+  return uuidPath;
 }
 
 export {

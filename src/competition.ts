@@ -4,6 +4,8 @@ import { Message, MessageEmbed } from 'discord.js';
 // eslint-disable-next-line camelcase
 import { quality_1vs1, rate_1vs1, Rating } from 'ts-trueskill';
 import { stripIndents } from 'common-tags';
+import { promisify } from 'util';
+import * as rimraf from 'rimraf';
 // eslint-disable-next-line
 import { User } from './database';
 // eslint-disable-next-line
@@ -186,7 +188,7 @@ async function battle(playerA: User, playerB: User, message: Message) {
           await resultMessage.edit(result);
         } catch (e) {
           console.error(e);
-          let error = '';
+          let error: string;
           if ((e?.toString() ?? '') === '') error = 'Error unspecified.';
           else error = e.toString();
           result.spliceFields(0, 1, [{ name: 'Status', value: 'Error' }]);
@@ -198,9 +200,11 @@ async function battle(playerA: User, playerB: User, message: Message) {
     );
     (<CompClient>message.client).occupiedPorts = (<CompClient>message.client).occupiedPorts
       .filter((p) => p !== port);
+    await promisify(rimraf)(playerADir);
+    await promisify(rimraf)(playerBDir);
   } catch (e) {
     console.error(e);
-    let error = '';
+    let error: string;
     if ((e?.toString() ?? '') === '') error = 'Error unspecified.';
     else error = e.toString();
     result.spliceFields(0, 1, [{ name: 'Status', value: 'Error' }]);
@@ -208,7 +212,6 @@ async function battle(playerA: User, playerB: User, message: Message) {
     await resultMessage.edit(result);
     await resultMessage.channel.send(`<@${playerA.id}>, <@${playerB.id}>\n${errorHints}`);
   }
-
   return resultMessage;
 }
 
