@@ -16,6 +16,7 @@ const config: {
         'GUILD_MESSAGES',
         'GUILD_MEMBERS',
         'DIRECT_MESSAGES',
+        'GUILD_PRESENCES',
       ],
     },
   },

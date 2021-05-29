@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 import { Sequelize, Model, DataTypes } from 'sequelize';
 
 const sequelize = new Sequelize({
@@ -34,8 +35,40 @@ User.init({
   },
 }, { sequelize, modelName: 'user' });
 
+class Song extends Model {
+  id: number;
+
+  name: string;
+
+  author: string;
+
+  user: string;
+}
+Song.init({
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    allowNull: false,
+    autoIncrement: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  author: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  user: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+}, { sequelize, modelName: 'song' });
+
 async function init() {
   await sequelize.sync();
 }
 
-export { init, sequelize, User };
+export {
+  init, sequelize, User, Song,
+};

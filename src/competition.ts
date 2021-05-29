@@ -18,12 +18,12 @@ const errorHints = stripIndents`Uh oh, looks like your submission has hit a snag
 - A headless process has accidentally been created. (This will be cleared within ten minutes, try again then).`;
 
 function runCabal(
-  command, args, cwd, title, userid, cbText = [], cb = () => {
-  },
+  // eslint-disable-next-line no-unused-vars
+  command, args, cwd, title, userid, cbText = [], cb?: () => void,
 ): Promise<Buffer[]> {
   return new Promise((resolve, reject) => {
-    const stdout = [];
-    const stderr = [];
+    const stdout: Buffer[] = [];
+    const stderr: Buffer[] = [];
 
     const process = spawn(command, args, { cwd });
 
@@ -31,14 +31,11 @@ function runCabal(
       process.kill();
     }, 600000);
 
-    let cbCalled = false;
-
-    process.stdout.on('data', (data) => {
+    process.stdout.on('data', (data: Buffer) => {
       console.log(`[${title.toUpperCase()}_${userid}] ${data}`);
       stdout.push(data);
       cbText.forEach((target) => {
-        if (data.includes(target) && !cbCalled) {
-          cbCalled = true;
+        if (data.includes(target) && cb !== undefined) {
           cb();
         }
       });
@@ -94,6 +91,8 @@ async function battle(playerA: User, playerB: User, message: Message) {
     while ((<CompClient>message.client).occupiedPorts.includes(port)) {
       port += 1;
     }
+    (<CompClient>message.client).occupiedPorts.push(port);
+    console.log(`Running on port ${port}`);
 
     result.spliceFields(0, 1, [{ name: 'Status', value: 'Building code 🛠' }]);
     await resultMessage.edit(result);
@@ -112,11 +111,11 @@ async function battle(playerA: User, playerB: User, message: Message) {
       playerADir,
       'server',
       playerA.id,
-      ['Linking', 'Up to date'],
+      ['Up to date'],
       async () => {
         console.log('Ready');
         try {
-          result.spliceFields(0, 1, [{ name: 'Status', value: 'Playing ♟' }]);
+          result.spliceFields(0, 1, [{ name: 'Status', value: 'Playing 🎮' }]);
           await resultMessage.edit(result);
 
           const rawOutput = await runCabal(
@@ -150,11 +149,16 @@ async function battle(playerA: User, playerB: User, message: Message) {
             [newRatingB, newRatingA] = rate_1vs1(ratingB, ratingA);
           }
 
+          const finalBoard = outcome.finalState.board;
+          const playerAScore = finalBoard.match(/1/g).length;
+          const playerBScore = finalBoard.match(/2/g).length;
+
           const dRatingA = (newRatingA.mu - ratingA.mu).toPrecision(3);
           const dSigmaA = (newRatingA.sigma - ratingA.sigma).toPrecision(3);
           const dRatingB = (newRatingB.mu - ratingB.mu).toPrecision(3);
           const dSigmaB = (newRatingB.sigma - ratingB.sigma).toPrecision(3);
 
+          result.addField(`Final score (${playerA.username} - ${playerB.username})`, `${playerAScore} - ${playerBScore}`);
           result.addField(`${playerA.username} Rating Adjustment`, `${+dRatingA > 0 ? '+' : ''}${dRatingA}=>${newRatingA.mu.toPrecision(3)} (${+dSigmaA > 0 ? '+' : ''}${dSigmaA}=>${newRatingA.sigma.toPrecision(3)})`);
           result.addField(`${playerB.username} Rating Adjustment`, `${+dRatingB > 0 ? '+' : ''}${dRatingB}=>${newRatingB.mu.toPrecision(3)} (${+dSigmaB > 0 ? '+' : ''}${dSigmaB}=>${newRatingB.sigma.toPrecision(3)})`);
           result.spliceFields(0, 3, [
@@ -185,6 +189,8 @@ async function battle(playerA: User, playerB: User, message: Message) {
         }
       },
     );
+    (<CompClient>message.client).occupiedPorts = (<CompClient>message.client).occupiedPorts
+      .filter((p) => p !== port);
   } catch (e) {
     console.error(e);
     let error = '';
