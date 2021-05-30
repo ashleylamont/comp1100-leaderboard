@@ -152,8 +152,8 @@ async function battle(playerA: User, playerB: User, message: Message) {
           }
 
           const finalBoard = outcome.finalState.board;
-          const playerAScore = finalBoard.match(/1/g).length;
-          const playerBScore = finalBoard.match(/2/g).length;
+          const playerAScore = (finalBoard.match(/1/g) ?? []).length;
+          const playerBScore = (finalBoard.match(/2/g) ?? []).length;
 
           const dRatingA = (newRatingA.mu - ratingA.mu).toPrecision(3);
           const dSigmaA = (newRatingA.sigma - ratingA.sigma).toPrecision(3);
