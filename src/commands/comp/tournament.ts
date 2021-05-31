@@ -53,13 +53,13 @@ export default class TournamentCommand extends Command {
 
     const count = Math.ceil(Math.sqrt(pairs.length));
 
-    const selectedPairs = pairs.slice(0, count);
+    const selectedPairs = shuffle(pairs.slice(0, count));
 
-    while (selectedPairs.length > 0) {
-      const [a, b] = shuffle(selectedPairs.pop());
+    selectedPairs.forEach(([a, b]) => {
+      console.log(`Battling ${a.username} and ${b.username}`);
 
       battle(a, b, message);
-    }
+    });
 
     return message;
   }
