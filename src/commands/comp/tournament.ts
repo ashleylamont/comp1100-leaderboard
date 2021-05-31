@@ -1,17 +1,9 @@
 import { Command, CommandoMessage } from 'discord.js-commando';
+import * as _ from 'lodash';
 // eslint-disable-next-line
 import { User } from '../../database';
 // eslint-disable-next-line
 import { battle } from '../../competition';
-
-function shuffle(a) {
-  for (let i = a.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    // eslint-disable-next-line no-param-reassign
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 const combinations = require('combinations');
 
@@ -49,11 +41,11 @@ export default class TournamentCommand extends Command {
         if (contestant) contestants.push(contestant);
       }));
 
-    const pairs = shuffle(combinations(contestants, 2, 2));
+    const pairs = _.shuffle(combinations(contestants, 2, 2));
 
     const count = Math.ceil(Math.sqrt(pairs.length));
 
-    const selectedPairs = shuffle(pairs.slice(0, count));
+    const selectedPairs = _.shuffle(pairs.slice(0, count));
 
     selectedPairs.forEach(([a, b]) => {
       console.log(`Battling ${a.username} and ${b.username}`);

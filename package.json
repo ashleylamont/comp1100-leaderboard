@@ -18,6 +18,7 @@
     "discord.js": "^12.5.3",
     "discord.js-commando": "^0.12.3",
     "form-data": "^4.0.0",
+    "lodash": "^4.17.21",
     "node-virustotal": "^3.32.0",
     "recursive-copy": "^2.0.11",
     "rimraf": "^3.0.2",
