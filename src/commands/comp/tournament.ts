@@ -5,7 +5,7 @@ import { User } from '../../database';
 import { battle } from '../../competition';
 
 function shuffle(a) {
-  for (let i = a.length - 1; i > 0; i--) {
+  for (let i = a.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     // eslint-disable-next-line no-param-reassign
     [a[i], a[j]] = [a[j], a[i]];
@@ -58,8 +58,7 @@ export default class TournamentCommand extends Command {
     while (selectedPairs.length > 0) {
       const [a, b] = shuffle(selectedPairs.pop());
 
-      // eslint-disable-next-line no-await-in-loop
-      await battle(a, b, message);
+      battle(a, b, message);
     }
 
     return message;
